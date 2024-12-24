@@ -70,4 +70,4 @@
 ---
 
 ## Блок-схема проекта
-![Схема проекта](https://www.figma.com/board/ncbOhgtE5OoZqLVz4Fcdix/AICA?node-id=0-1&t=lbAyYCtlXcQBSmHI-1)
+![Схема проекта](https://github.com/erarta-aica/ml-system-design/blob/main/AICA.png)
