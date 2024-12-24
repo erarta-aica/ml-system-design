@@ -71,5 +71,3 @@
 
 ## Блок-схема проекта
 ![Схема проекта](https://www.figma.com/board/ncbOhgtE5OoZqLVz4Fcdix/AICA?node-id=0-1&t=lbAyYCtlXcQBSmHI-1)
-
-	Примечание: Замените ./path-to-image/A_detailed_system_flowchart_for_a_calorie_estimati.png на фактический путь к изображению в вашем репозитории.
