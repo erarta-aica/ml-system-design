@@ -153,6 +153,13 @@
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script>
+        // Инициализация process.env для Vercel
+        window.process = {
+            env: {
+                OPENAI_API_KEY: '__OPENAI_API_KEY__'  // Это будет заменено при сборке
+            }
+        };
+
         class FoodCalorieUI {
             constructor() {
                 this.dropZone = document.getElementById('drop-zone');
@@ -160,7 +167,7 @@
                 this.setupCache();
                 
                 // Получаем ключ из Vercel Environment Variables
-                this.OPENAI_API_KEY = '<%- process.env.OPENAI_API_KEY %>';
+                this.OPENAI_API_KEY = process.env.OPENAI_API_KEY || process.env.NEXT_PUBLIC_OPENAI_API_KEY;
             }
 
             setupCache() {
