@@ -10,12 +10,18 @@ import numpy as np
 async def load_and_preprocess_data():
     """Загрузка и предобработка данных"""
     loader = FoodDataLoader()
-    # Предполагаем, что loader.load_dataset возвращает датафрейм и список изображений
-    df, raw_images = await loader.load_dataset(num_examples=1000)
     
-    # Выведем информацию о структуре датафрейма
+    # Уменьшаем количество примеров и добавляем отладку
+    result = await loader.load_dataset(num_examples=100)  # Уменьшили до 100
+    print(f"\nТип возвращаемого значения: {type(result)}")
+    if isinstance(result, tuple):
+        print(f"Длина кортежа: {len(result)}")
+    
+    df, raw_images = result
+    
     print("\nСтруктура датафрейма:")
     print(df.columns)
+    print("\nКоличество изображений:", len(raw_images))
     print("\nПример данных:")
     print(df.head())
     
@@ -27,8 +33,13 @@ async def load_and_preprocess_data():
         return img
 
     # Подготовка данных
+    print("\nПредобработка изображений...")
     images = np.array([preprocess_image(img) for img in raw_images])
     calories = df['calories'].values.astype(np.float32)
+    
+    print(f"\nРазмерность данных:")
+    print(f"Изображения: {images.shape}")
+    print(f"Калории: {calories.shape}")
     
     return images, calories
 

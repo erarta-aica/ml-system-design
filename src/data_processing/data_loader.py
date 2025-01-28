@@ -96,7 +96,12 @@ class FoodDataLoader:
                     data.append(data_entry)
                     images.append(image)  # Сохраняем изображение
         
-        return pd.DataFrame(data), images  # Возвращаем и датафрейм, и список изображений
+        df = pd.DataFrame(data)
+        print(f"\nРазмеры возвращаемых данных:")
+        print(f"DataFrame: {df.shape}")
+        print(f"Images list: {len(images)}")
+        
+        return df, images  # Возвращаем и датафрейм, и список изображений
 
     def get_category_statistics(self, df: pd.DataFrame) -> pd.DataFrame:
         """
