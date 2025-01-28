@@ -6,6 +6,7 @@ from data_processing.data_loader import FoodDataLoader
 import asyncio
 import tensorflow as tf
 import numpy as np
+import os
 
 async def load_and_preprocess_data():
     """Загрузка и предобработка данных"""
@@ -88,10 +89,22 @@ async def main():
     print(f"MSE: {main_metrics[0]:.2f}")
     print(f"MAE: {main_metrics[1]:.2f}")
     
-    # Сохранение моделей
-    baseline_model.save('results/baseline_model')
-    main_model.save('results/main_model')
+    # Создаем директорию results, если она не существует
+    os.makedirs('results', exist_ok=True)
+    
+    # Сохранение моделей с правильным расширением
+    baseline_model.save('results/baseline_model.keras')
+    main_model.save('results/main_model.keras')
     print("\nМодели сохранены в директории results/")
+    
+    # Выводим итоговые метрики
+    print("\nИтоговые результаты:")
+    print("Базовая модель (бейзлайн):")
+    print(f"MSE: {baseline_metrics[0]:.2f}")
+    print(f"MAE: {baseline_metrics[1]:.2f}")
+    print("\nОсновная модель:")
+    print(f"MSE: {main_metrics[0]:.2f}")
+    print(f"MAE: {main_metrics[1]:.2f}")
 
 if __name__ == "__main__":
     asyncio.run(main())
