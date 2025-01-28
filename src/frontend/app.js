@@ -4,8 +4,8 @@ class FoodCalorieUI {
         this.setupEventListeners();
         this.setupCache();
         
-        // API ключ можно хранить в переменных окружения или получать с бэкенда
-        this.OPENAI_API_KEY = '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'; // В реальном приложении не храните ключ в коде!
+        // URL нашего бэкенд-сервера
+        this.API_URL = 'http://localhost:8000';
     }
 
     setupCache() {
@@ -70,11 +70,19 @@ class FoodCalorieUI {
                 return;
             }
 
-            // Конвертируем файл в base64
-            const base64Image = await this.fileToBase64(file);
+            const formData = new FormData();
+            formData.append('file', file);
             
-            // Отправляем запрос к ChatGPT
-            const result = await this.analyzeFoodImage(base64Image);
+            const response = await fetch(`${this.API_URL}/analyze-food`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to analyze image');
+            }
+
+            const result = await response.json();
             
             // Сохраняем в кэш
             this.cache.set(cacheKey, result);
