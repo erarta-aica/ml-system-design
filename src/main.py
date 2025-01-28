@@ -57,14 +57,39 @@ async def main():
     X_train, X_val = X[:train_size], X[train_size:]
     y_train, y_val = y[:train_size], y[train_size:]
     
+    # Создаем callbacks
+    callbacks = [
+        tf.keras.callbacks.EarlyStopping(
+            monitor='val_loss',
+            patience=5,
+            restore_best_weights=True,
+            verbose=1
+        ),
+        tf.keras.callbacks.ReduceLROnPlateau(
+            monitor='val_loss',
+            factor=0.2,
+            patience=3,
+            min_lr=1e-6,
+            verbose=1
+        ),
+        tf.keras.callbacks.ModelCheckpoint(
+            'results/best_model_{epoch:02d}.h5',
+            monitor='val_loss',
+            save_best_only=True,
+            verbose=1
+        )
+    ]
+    
     # Создание и обучение бейзлайн модели
     print("\nОбучение базовой модели (бейзлайн)...")
     baseline_model = build_baseline_model(input_shape=(224, 224, 3))
     baseline_history = baseline_model.fit(
         X_train, y_train,
         validation_data=(X_val, y_val),
-        epochs=10,
-        batch_size=32
+        epochs=30,  # Увеличили количество эпох
+        batch_size=32,
+        callbacks=callbacks,
+        verbose=2
     )
     
     # Оценка бейзлайна
@@ -79,8 +104,10 @@ async def main():
     main_history = main_model.fit(
         X_train, y_train,
         validation_data=(X_val, y_val),
-        epochs=10,
-        batch_size=32
+        epochs=30,  # Увеличили количество эпох
+        batch_size=32,
+        callbacks=callbacks,
+        verbose=2
     )
     
     # Оценка основной модели
@@ -89,13 +116,39 @@ async def main():
     print(f"MSE: {main_metrics[0]:.2f}")
     print(f"MAE: {main_metrics[1]:.2f}")
     
-    # Создаем директорию results, если она не существует
-    os.makedirs('results', exist_ok=True)
-    
-    # Сохранение моделей с правильным расширением
-    baseline_model.save('results/baseline_model.keras')
-    main_model.save('results/main_model.keras')
-    print("\nМодели сохранены в директории results/")
+    # Сохранение результатов обучения
+    try:
+        os.makedirs('results', exist_ok=True)
+        
+        # Сохраняем историю обучения
+        history_data = {
+            'baseline': {
+                'loss': baseline_history.history['loss'],
+                'val_loss': baseline_history.history['val_loss'],
+                'mae': baseline_history.history['mae'],
+                'val_mae': baseline_history.history['val_mae']
+            },
+            'main': {
+                'loss': main_history.history['loss'],
+                'val_loss': main_history.history['val_loss'],
+                'mae': main_history.history['mae'],
+                'val_mae': main_history.history['val_mae']
+            }
+        }
+        
+        import json
+        with open('results/training_history.json', 'w') as f:
+            json.dump(history_data, f)
+        
+        # Сохраняем веса моделей
+        baseline_model.save_weights('results/baseline_weights.h5')
+        main_model.save_weights('results/main_weights.h5')
+        
+        print("\nМодели и история обучения успешно сохранены в директории results/")
+        
+    except Exception as e:
+        print(f"\nОшибка при сохранении результатов: {e}")
+        print("Продолжаем выполнение...")
     
     # Выводим итоговые метрики
     print("\nИтоговые результаты:")
