@@ -159,8 +159,8 @@
                 this.setupEventListeners();
                 this.setupCache();
                 
-                // API ключ OpenAI (начинается с 'sk-...')
-                this.OPENAI_API_KEY = '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'; // Замените на ваш ключ OpenAI
+                // Получаем ключ из переменных окружения
+                this.OPENAI_API_KEY = process.env.CHATGPT_KEY;
             }
 
             setupCache() {
