@@ -4,8 +4,10 @@ class FoodCalorieUI {
         this.setupEventListeners();
         this.setupCache();
         
-        // URL нашего бэкенд-сервера
-        this.API_URL = 'http://localhost:8000';
+        // URL нашего бэкенд-сервера для разработки
+        this.API_URL = window.location.hostname === 'localhost' 
+            ? 'http://localhost:8000'
+            : 'https://your-backend-url.com'; // Здесь нужно указать URL вашего развернутого бэкенда
     }
 
     setupCache() {
