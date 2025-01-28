@@ -278,12 +278,20 @@
 
                 const data = await response.json();
                 try {
-                    return JSON.parse(data.choices[0].message.content);
+                    // Извлекаем JSON из markdown блока в ответе
+                    const content = data.choices[0].message.content;
+                    const jsonMatch = content.match(/```json\n([\s\S]*?)\n```/);
+                    if (jsonMatch && jsonMatch[1]) {
+                        return JSON.parse(jsonMatch[1]);
+                    }
+                    // Если не нашли markdown блок, пробуем парсить весь контент
+                    return JSON.parse(content);
                 } catch (e) {
+                    console.error('Parsing error:', e);
                     return {
                         foodItems: ["Could not parse items"],
                         totalCalories: 0,
-                        rawResponse: data.choices[0].message.content
+                        rawResponse: content
                     };
                 }
             }
