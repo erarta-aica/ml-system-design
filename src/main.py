@@ -12,8 +12,8 @@ async def load_and_preprocess_data():
     """Загрузка и предобработка данных"""
     loader = FoodDataLoader()
     
-    # Уменьшаем количество примеров и добавляем отладку
-    result = await loader.load_dataset(num_examples=100)  # Уменьшили до 100
+    # Увеличиваем размер выборки
+    result = await loader.load_dataset(num_examples=500)  # Увеличили с 100 до 500
     print(f"\nТип возвращаемого значения: {type(result)}")
     if isinstance(result, tuple):
         print(f"Длина кортежа: {len(result)}")
@@ -73,7 +73,7 @@ async def main():
             verbose=1
         ),
         tf.keras.callbacks.ModelCheckpoint(
-            'results/best_model_{epoch:02d}.h5',
+            'results/best_model_{epoch:02d}.keras',
             monitor='val_loss',
             save_best_only=True,
             verbose=1
@@ -140,9 +140,9 @@ async def main():
         with open('results/training_history.json', 'w') as f:
             json.dump(history_data, f)
         
-        # Сохраняем веса моделей
-        baseline_model.save_weights('results/baseline_weights.h5')
-        main_model.save_weights('results/main_weights.h5')
+        # Сохраняем модели целиком
+        baseline_model.save('results/baseline_model.keras')
+        main_model.save('results/main_model.keras')
         
         print("\nМодели и история обучения успешно сохранены в директории results/")
         
