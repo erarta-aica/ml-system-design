@@ -103,64 +103,6 @@ class FoodCalorieUI {
             .join('');
     }
 
-    async fileToBase64(file) {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result.split(',')[1]);
-            reader.onerror = reject;
-            reader.readAsDataURL(file);
-        });
-    }
-
-    async analyzeFoodImage(base64Image) {
-        const response = await fetch('https://api.openai.com/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${this.OPENAI_API_KEY}`
-            },
-            body: JSON.stringify({
-                model: "gpt-4-vision-preview",
-                messages: [
-                    {
-                        role: "user",
-                        content: [
-                            {
-                                type: "text",
-                                text: "Analyze this food image and provide: 1) What food items you see 2) Estimated calories for the entire portion. Return the result in JSON format with fields: foodItems (array of strings) and totalCalories (number)"
-                            },
-                            {
-                                type: "image_url",
-                                image_url: {
-                                    url: `data:image/jpeg;base64,${base64Image}`
-                                }
-                            }
-                        ]
-                    }
-                ],
-                max_tokens: 500
-            })
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to analyze image');
-        }
-
-        const data = await response.json();
-        try {
-            // Парсим JSON из текстового ответа
-            const result = JSON.parse(data.choices[0].message.content);
-            return result;
-        } catch (e) {
-            // Если не удалось распарсить JSON, возвращаем текст как есть
-            return {
-                foodItems: ["Could not parse items"],
-                totalCalories: 0,
-                rawResponse: data.choices[0].message.content
-            };
-        }
-    }
-
     displayResults(result) {
         const modal = document.createElement('div');
         modal.className = 'result-modal';
