@@ -159,8 +159,8 @@
                 this.setupEventListeners();
                 this.setupCache();
                 
-                // API ключ ChatGPT
-                this.OPENAI_API_KEY = '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';
+                // API ключ OpenAI (начинается с 'sk-...')
+                this.OPENAI_API_KEY = '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'; // Замените на ваш ключ OpenAI
             }
 
             setupCache() {
@@ -271,7 +271,9 @@
                 });
 
                 if (!response.ok) {
-                    throw new Error('Failed to analyze image');
+                    const error = await response.json();
+                    console.error('API Error:', error);
+                    throw new Error(error.error?.message || 'Failed to analyze image');
                 }
 
                 const data = await response.json();
