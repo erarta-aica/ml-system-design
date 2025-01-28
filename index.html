@@ -159,8 +159,8 @@
                 this.setupEventListeners();
                 this.setupCache();
                 
-                // Получаем ключ из переменных окружения
-                this.OPENAI_API_KEY = process.env.NEXT_PUBLIC_OPENAI_API_KEY;
+                // Получаем ключ из Vercel Environment Variables
+                this.OPENAI_API_KEY = '<%- process.env.OPENAI_API_KEY %>';
             }
 
             setupCache() {
