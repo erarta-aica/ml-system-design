@@ -5,7 +5,7 @@ class FoodCalorieUI {
         this.setupCache();
         
         // API ключ можно хранить в переменных окружения или получать с бэкенда
-        this.OPENAI_API_KEY = 'your-api-key'; // В реальном приложении не храните ключ в коде!
+        this.OPENAI_API_KEY = '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'; // В реальном приложении не храните ключ в коде!
     }
 
     setupCache() {
