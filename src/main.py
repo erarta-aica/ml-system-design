@@ -12,6 +12,12 @@ async def load_and_preprocess_data():
     loader = FoodDataLoader()
     df = await loader.load_dataset(num_examples=1000)
     
+    # Выведем информацию о структуре датафрейма
+    print("\nСтруктура датафрейма:")
+    print(df.columns)
+    print("\nПример данных:")
+    print(df.head())
+    
     # Предобработка изображений
     def preprocess_image(img):
         # Изменение размера и нормализация
@@ -19,8 +25,8 @@ async def load_and_preprocess_data():
         img = tf.cast(img, tf.float32) / 255.0
         return img
 
-    # Подготовка данных
-    images = np.array([preprocess_image(img) for img in df['image']])
+    # Подготовка данных - используем правильное имя колонки
+    images = np.array([preprocess_image(img) for img in df['images']])  # или другое имя колонки
     calories = df['calories'].values.astype(np.float32)
     
     return images, calories
@@ -28,6 +34,10 @@ async def load_and_preprocess_data():
 async def main():
     print("Загрузка и подготовка данных...")
     X, y = await load_and_preprocess_data()
+    
+    print(f"\nФорма входных данных:")
+    print(f"X shape: {X.shape}")
+    print(f"y shape: {y.shape}")
     
     # Разделение на обучающую и валидационную выборки
     train_size = int(0.8 * len(X))
