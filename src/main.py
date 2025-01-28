@@ -13,17 +13,14 @@ async def load_and_preprocess_data():
     df = await loader.load_dataset(num_examples=1000)
     
     # Предобработка изображений
-    def preprocess_image(image_path):
-        # Загрузка изображения
-        img = tf.io.read_file(image_path)
-        img = tf.image.decode_jpeg(img, channels=3)
+    def preprocess_image(img):
         # Изменение размера и нормализация
         img = tf.image.resize(img, [224, 224])
-        img = img / 255.0
+        img = tf.cast(img, tf.float32) / 255.0
         return img
 
     # Подготовка данных
-    images = np.array([preprocess_image(path) for path in df['image_path']])
+    images = np.array([preprocess_image(img) for img in df['image']])
     calories = df['calories'].values.astype(np.float32)
     
     return images, calories
