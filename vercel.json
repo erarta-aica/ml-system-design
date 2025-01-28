@@ -1,5 +1,11 @@
 {
   "version": 2,
+  "git": {
+    "deploymentEnabled": {
+      "main": false,
+      "hw-4": true
+    }
+  },
   "builds": [
     {
       "src": "src/frontend/**",
