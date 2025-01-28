@@ -15,28 +15,46 @@ class FoodCalorieUI {
     }
 
     setupEventListeners() {
-        this.dropZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            this.dropZone.classList.add('dragover');
+        // Предотвращаем стандартное поведение браузера при drag&drop
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            this.dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+            });
         });
 
-        this.dropZone.addEventListener('dragleave', () => {
-            this.dropZone.classList.remove('dragover');
+        // Добавляем визуальный эффект при перетаскивании
+        ['dragenter', 'dragover'].forEach(eventName => {
+            this.dropZone.addEventListener(eventName, () => {
+                this.dropZone.classList.add('dragover');
+            });
         });
 
-        this.dropZone.addEventListener('drop', async (e) => {
-            e.preventDefault();
-            this.dropZone.classList.remove('dragover');
+        ['dragleave', 'drop'].forEach(eventName => {
+            this.dropZone.addEventListener(eventName, () => {
+                this.dropZone.classList.remove('dragover');
+            });
+        });
+
+        // Обработка сброшенного файла
+        this.dropZone.addEventListener('drop', (e) => {
             const file = e.dataTransfer.files[0];
-            await this.handleFile(file);
+            if (file) {
+                this.handleFile(file);
+            }
         });
 
-        // Добавляем поддержку клика
+        // Обработка клика
         this.dropZone.addEventListener('click', () => {
             const input = document.createElement('input');
             input.type = 'file';
             input.accept = 'image/*';
-            input.onchange = (e) => this.handleFile(e.target.files[0]);
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    this.handleFile(file);
+                }
+            };
             input.click();
         });
     }

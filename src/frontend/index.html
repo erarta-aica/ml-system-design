@@ -4,14 +4,23 @@
     <title>Food Calorie Estimator</title>
     <base href="/ml-system-design/">
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+    <div class="header">
+        <div class="header-title">MEDIA PROCESSOR</div>
+        <div class="header-actions">
+            <button class="header-button"><i class="fas fa-info-circle"></i></button>
+            <button class="header-button"><i class="fas fa-share"></i></button>
+            <button class="header-button"><i class="fas fa-heart"></i></button>
+        </div>
+    </div>
     <div class="dropzone" id="drop-zone">
         <div class="upload-area">
-            <div class="upload-icon">+</div>
+            <div class="upload-icon"></div>
             <div class="dropzone-text">DROP YOUR FILE HERE</div>
-            <div class="file-size">FILE SIZE MUST BE AT LEAST 3840 x 2160 PX</div>
         </div>
+        <div class="file-size">FILE SIZE MUST BE AT LEAST 3840 x 2160 PX</div>
     </div>
     <script src="app.js"></script>
 </body>

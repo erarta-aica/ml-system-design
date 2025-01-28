@@ -1,42 +1,104 @@
 body {
     margin: 0;
     padding: 0;
-    font-family: Arial, sans-serif;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background: #1E1E1E;
 }
 
 .dropzone {
-    width: 100%;
+    width: 100vw;
     height: 100vh;
-    background: #1E1E1E;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.3s ease;
+    position: relative;
 }
 
 .upload-area {
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
 }
 
 .upload-icon {
-    color: white;
-    font-size: 48px;
-    margin-bottom: 20px;
+    width: 40px;
+    height: 40px;
+    position: relative;
+}
+
+.upload-icon::before,
+.upload-icon::after {
+    content: '';
+    position: absolute;
+    background: white;
+}
+
+.upload-icon::before {
+    width: 2px;
+    height: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.upload-icon::after {
+    width: 40px;
+    height: 2px;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 .dropzone-text {
     color: white;
-    margin-bottom: 10px;
+    font-size: 14px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
 }
 
 .file-size {
     color: #666;
     font-size: 12px;
+    position: absolute;
+    bottom: 30px;
+    letter-spacing: 1px;
 }
 
-.dragover {
-    background: #2E2E2E;
+.dragover .upload-icon::before,
+.dragover .upload-icon::after {
+    background: #3498db;
+}
+
+/* Верхняя панель */
+.header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-title {
+    color: white;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+.header-actions {
+    display: flex;
+    gap: 20px;
+}
+
+.header-button {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 5px;
 }
 
 .loader {
