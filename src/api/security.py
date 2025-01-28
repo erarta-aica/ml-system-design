@@ -15,9 +15,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Rate limiting
+# Rate limiting 
 redis_client = redis.Redis(host='localhost', port=6379, db=0)
-RATE_LIMIT = 100  # запросов
+RATE_LIMIT = 100  # 100 запросов
 RATE_LIMIT_PERIOD = 3600  # в час
 
 async def rate_limit_middleware(request: Request, call_next):
