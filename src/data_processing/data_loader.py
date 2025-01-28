@@ -54,14 +54,18 @@ class FoodDataLoader:
             num_examples (int): Количество примеров для загрузки
             
         Returns:
-            pd.DataFrame: Датафрейм с данными
+            tuple: (pd.DataFrame, list) - Датафрейм с данными и список изображений
         """
         print("Загрузка датасета Food101...")
         
-        # Загрузка датасета
-        dataset = tfds.load('food101', split='train[:10%]')
-        
+        builder = tfds.builder('food101')
+        builder.download_and_prepare()
+        info = builder.info
+        dataset = builder.as_dataset(split='train')
+
         data = []
+        images = []  # Список для хранения изображений
+        
         async with aiohttp.ClientSession() as session:
             tasks = []
             
@@ -69,7 +73,7 @@ class FoodDataLoader:
             for i, example in enumerate(dataset.take(num_examples)):
                 image = example['image']
                 label = example['label'].numpy()
-                category = tfds.features.ClassLabel(num_classes=101, names=tfds.load('food101', split='train').info.features['label'].names).int2str(label)
+                category = tfds.features.ClassLabel(names=info.features['label'].names).int2str(label)
                 
                 if category in self.category_calories:
                     # Добавляем случайное отклонение к базовой калорийности (±20%)
@@ -77,11 +81,11 @@ class FoodDataLoader:
                     calories = np.random.normal(base_calories, base_calories * 0.1)
                     
                     task = asyncio.ensure_future(self.download_and_process_image(image, session))
-                    tasks.append((task, category, calories))
+                    tasks.append((task, category, calories, image))  # Добавляем image в кортеж
             
             # Обработка изображений с progress bar
             print("Обработка изображений...")
-            for task, category, calories in tqdm(tasks, total=len(tasks)):
+            for task, category, calories, image in tqdm(tasks, total=len(tasks)):
                 features = await task
                 if features is not None:
                     data_entry = {
@@ -90,8 +94,14 @@ class FoodDataLoader:
                         **features
                     }
                     data.append(data_entry)
+                    images.append(image)  # Сохраняем изображение
         
-        return pd.DataFrame(data)
+        df = pd.DataFrame(data)
+        print(f"\nРазмеры возвращаемых данных:")
+        print(f"DataFrame: {df.shape}")
+        print(f"Images list: {len(images)}")
+        
+        return df, images  # Возвращаем и датафрейм, и список изображений
 
     def get_category_statistics(self, df: pd.DataFrame) -> pd.DataFrame:
         """
