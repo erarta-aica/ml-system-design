@@ -54,23 +54,18 @@ class FoodDataLoader:
             num_examples (int): Количество примеров для загрузки
             
         Returns:
-            pd.DataFrame: Датафрейм с данными
+            tuple: (pd.DataFrame, list) - Датафрейм с данными и список изображений
         """
         print("Загрузка датасета Food101...")
         
-        # Создайте объект DatasetBuilder
         builder = tfds.builder('food101')
-
-        # Подготовьте набор данных
         builder.download_and_prepare()
-
-        # Получите информацию о наборе данных
         info = builder.info
-
-        # Загрузите набор данных
         dataset = builder.as_dataset(split='train')
 
         data = []
+        images = []  # Список для хранения изображений
+        
         async with aiohttp.ClientSession() as session:
             tasks = []
             
@@ -86,11 +81,11 @@ class FoodDataLoader:
                     calories = np.random.normal(base_calories, base_calories * 0.1)
                     
                     task = asyncio.ensure_future(self.download_and_process_image(image, session))
-                    tasks.append((task, category, calories))
+                    tasks.append((task, category, calories, image))  # Добавляем image в кортеж
             
             # Обработка изображений с progress bar
             print("Обработка изображений...")
-            for task, category, calories in tqdm(tasks, total=len(tasks)):
+            for task, category, calories, image in tqdm(tasks, total=len(tasks)):
                 features = await task
                 if features is not None:
                     data_entry = {
@@ -99,8 +94,9 @@ class FoodDataLoader:
                         **features
                     }
                     data.append(data_entry)
+                    images.append(image)  # Сохраняем изображение
         
-        return pd.DataFrame(data)
+        return pd.DataFrame(data), images  # Возвращаем и датафрейм, и список изображений
 
     def get_category_statistics(self, df: pd.DataFrame) -> pd.DataFrame:
         """

@@ -10,7 +10,8 @@ import numpy as np
 async def load_and_preprocess_data():
     """Загрузка и предобработка данных"""
     loader = FoodDataLoader()
-    df = await loader.load_dataset(num_examples=1000)
+    # Предполагаем, что loader.load_dataset возвращает датафрейм и список изображений
+    df, raw_images = await loader.load_dataset(num_examples=1000)
     
     # Выведем информацию о структуре датафрейма
     print("\nСтруктура датафрейма:")
@@ -25,8 +26,8 @@ async def load_and_preprocess_data():
         img = tf.cast(img, tf.float32) / 255.0
         return img
 
-    # Подготовка данных - используем правильное имя колонки
-    images = np.array([preprocess_image(img) for img in df['images']])  # или другое имя колонки
+    # Подготовка данных
+    images = np.array([preprocess_image(img) for img in raw_images])
     calories = df['calories'].values.astype(np.float32)
     
     return images, calories
