@@ -1,17 +1,32 @@
-from tensorflow.keras.applications import ResNet50
-from tensorflow.keras.layers import Dense, GlobalAveragePooling2D
-from tensorflow.keras.models import Model
+import tensorflow as tf
+from tensorflow.keras import layers, models
 
-def build_baseline_model(input_shape, num_classes):
-    base_model = ResNet50(weights='imagenet', include_top=False, input_shape=input_shape)
-    x = base_model.output
-    x = GlobalAveragePooling2D()(x)
-    x = Dense(1024, activation='relu')(x)
-    predictions = Dense(num_classes, activation='softmax')(x)
-    model = Model(inputs=base_model.input, outputs=predictions)
+def build_baseline_model(input_shape):
+    """
+    Создает базовую модель (бейзлайн) для предсказания калорий.
+    Простая CNN архитектура.
+    """
+    model = models.Sequential([
+        # Входной слой
+        layers.Input(shape=input_shape),
+        
+        # Сверточные слои
+        layers.Conv2D(32, (3, 3), activation='relu'),
+        layers.MaxPooling2D((2, 2)),
+        layers.Conv2D(64, (3, 3), activation='relu'),
+        layers.MaxPooling2D((2, 2)),
+        
+        # Полносвязные слои
+        layers.Flatten(),
+        layers.Dense(64, activation='relu'),
+        layers.Dropout(0.5),
+        layers.Dense(1)  # Выходной слой для предсказания калорий
+    ])
     
-    for layer in base_model.layers:
-        layer.trainable = False
+    model.compile(
+        optimizer='adam',
+        loss='mse',
+        metrics=['mae']
+    )
     
-    model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
     return model

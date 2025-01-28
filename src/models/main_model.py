@@ -1,17 +1,37 @@
-from tensorflow.keras.applications import EfficientNetB0
-from tensorflow.keras.layers import Dense, GlobalAveragePooling2D
-from tensorflow.keras.models import Model
+import tensorflow as tf
+from tensorflow.keras import layers, models
+from tensorflow.keras.applications import ResNet50V2
 
-def build_main_model(input_shape, num_classes):
-    base_model = EfficientNetB0(weights='imagenet', include_top=False, input_shape=input_shape)
-    x = base_model.output
-    x = GlobalAveragePooling2D()(x)
-    x = Dense(1024, activation='relu')(x)
-    predictions = Dense(num_classes, activation='softmax')(x)
-    model = Model(inputs=base_model.input, outputs=predictions)
+def build_main_model(input_shape):
+    """
+    Создает основную модель на базе ResNet50V2 для предсказания калорий
+    """
+    # Загружаем предобученную ResNet50V2 без верхних слоев
+    base_model = ResNet50V2(
+        include_top=False,
+        weights='imagenet',
+        input_shape=input_shape
+    )
     
-    for layer in base_model.layers:
-        layer.trainable = False
+    # Замораживаем веса базовой модели
+    base_model.trainable = False
     
-    model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+    model = models.Sequential([
+        # Базовая модель
+        base_model,
+        
+        # Добавляем свои слои
+        layers.GlobalAveragePooling2D(),
+        layers.Dense(256, activation='relu'),
+        layers.Dropout(0.5),
+        layers.Dense(128, activation='relu'),
+        layers.Dense(1)  # Выходной слой для предсказания калорий
+    ])
+    
+    model.compile(
+        optimizer='adam',
+        loss='mse',
+        metrics=['mae']
+    )
+    
     return model
