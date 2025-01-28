@@ -3,6 +3,9 @@ class FoodCalorieUI {
         this.dropZone = document.getElementById('drop-zone');
         this.setupEventListeners();
         this.setupCache();
+        
+        // Базовый URL для GitHub Pages
+        this.baseUrl = '/ml-system-design';
     }
 
     setupCache() {
